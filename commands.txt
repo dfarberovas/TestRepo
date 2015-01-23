@@ -1,0 +1,30 @@
+git config --global user.name "Your Name"
+git config --global user.email "your@email.address"
+
+git config --list
+
+## to init new local repository from new github repository
+git inti
+git remote add origin https://github.com/dfarberovas/repo_name.git
+git pull https://github.com/dfarberovas/repo_name.git master
+
+git add .
+git commit -m "message"
+git push
+
+git checkout -b branchname <create branch>
+git branch	<to see what branch you are on>
+
+
+Bash commands
+pwd
+clear
+ls
+cd
+mkdir
+touch <creates an empty file>
+cp
+rm
+mv
+date
+echo

@@ -1,0 +1,27 @@
+* Descriptive
+	Describe a set of data
+
+* Exploratory
+	Find relationships you didn't know about
+	<Correlation does not imply causation(причинная связь)>
+	
+* Inferential
+	Use relatively small sample of data to say something about a bigger population
+
+* Predictive
+	To use data on some objects to predict values for another object
+
+* Causal
+	To find out what happens to one variable when you make another variable change
+
+* Mechanistic
+	Understand exact changes in variables that lead to changes in other variables for individual objects
+	
+Statistical inference
+Variability
+Confounding <смешивание> S->L !!! A->S A->L !!!
+(Correlation is not causation)
+Randomization and blocking
+(Fix variable, stratify <наслаивать (в равных долях)>, randomize)
+Prediction
+Data dredging <не нужное углублене в поисках >
