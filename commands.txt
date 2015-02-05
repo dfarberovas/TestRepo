@@ -15,6 +15,7 @@ git push
 git checkout -b branchname <create branch>
 git branch	<to see what branch you are on>
 
+git status <see what is added, but not checked-in yet locally>
 
 Bash commands
 pwd
