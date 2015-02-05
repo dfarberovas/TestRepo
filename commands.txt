@@ -28,3 +28,116 @@ rm
 mv
 date
 echo
+
+R:
+
+getwd() - get working dir
+setwd() - set working dir
+
+<- assigmentoperator
+x <- 1:20
+x
+Result: [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+
+1    ## numeric
+1L   ## integer
+Inf  ## special number
+Nan  ## undefined value Not a Number
+NA   ## mising value NaN is NOT NA !!!
+
+x <- c(0.5, 0.6)       	## numeric
+x <- c(T,F)				## logical
+x <- c("a", "b", "c")	## character
+x <- 1:3				## ineger
+x <- c(1+0i, 2+4i)		## complex
+ 
+x <- vector("integer", length = 10)
+ [1] 0 0 0 0 0 0 0 0 0 0
+ 
+> x <- 0:6
+> class(x)
+[1] "integer"
+> as.numeric(x)
+[1] 0 1 2 3 4 5 6
+> as.complex(x)
+[1] 0+0i 1+0i 2+0i 3+0i 4+0i 5+0i 6+0i
+> as.character(x)
+[1] "0" "1" "2" "3" "4" "5" "6"
+> 
+
+> z <- c("a", "b", "c")
+> as.logical(z)
+[1] NA NA NA
+> as.integer(z)
+[1] NA NA NA
+Warning message:
+NAs introduced by coercion 
+> as.complex(z)
+[1] NA NA NA
+Warning message:
+NAs introduced by coercion 
+>
+
+> x <- list(1:5, "a", T, 1+3i) 
+> x
+[[1]]   ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[1] 1 2 3 4 5
+
+[[2]]
+[1] "a"
+
+[[3]]
+[1] TRUE
+
+[[4]]
+[1] 1+3i
+
+## ----------- Matrix -------------- ##
+
+> m <- matrix(1:4, nrow=2, ncol=2)
+
+m <- 1:10
+dim(m) <- c(2,5)  ## vector to matrix
+
+> z <- 1:3
+> y <- 11:13
+> cbind(z, y) ## matrix by column binding
+     z  y
+[1,] 1 11
+[2,] 2 12
+[3,] 3 13
+> rbind(z,y)  ## matrix by row binding
+  [,1] [,2] [,3]
+z    1    2    3
+y   11   12   13
+
+## ------------ Factor -------------- ##
+> x <- factor(c("yes", "yes", "no", "yes", "no"))
+> x
+[1] yes yes no  yes no 
+Levels: no yes
+> table(x)
+x
+ no yes 
+  2   3 
+  
+## ------------- Data Frame ---------- ##
+Could be columns of different data types but of the same length (number of rows)
+
+## ------------- Names --------------- ##
+> z <- 1:3
+> names(z) <- c("a", "b", "c")
+> z
+a b c 
+1 2 3 
+
+> l <- list(a=1:3, b=T, c="dfgsg", d=1+1i) ## list with names
+
+> m <- matrix(1:5, nrow=3, ncol=3)> > 
+> dimnames(m) <- list(c("a","b","c"), c("d","e","f"))
+> m
+  d e f
+a 1 4 7
+b 2 5 8
+c 3 6 9
+> 
