@@ -142,3 +142,23 @@ a 1 4 7
 b 2 5 8
 c 3 6 9
 > 
+
+## ------------- Read --------------- ##
+> data <- read.table("fname.txt") ## default separator ' ' SPACE
+> data <- read.csv("fname.txt")   ## default separator ',' comma; headers - true
+
+in <- read.table("dataset.txt", nrows=100)
+cl <- sapply(in, class)
+inA <- read.table(dataset.txt, coClasses = cl)
+
+
+## -------------- Save/Restore Data ---- ##
+> dput(dc, file="dc.R")
+> dddd <- dget("dc.R")
+
+> x <- "aaa"
+> y <- 1:5
+> z <- c(T, F, T)
+> dump(c("x", "y", "z"), file = "dumpdata.R")
+
+> source("dumpdata.R")
