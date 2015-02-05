@@ -162,3 +162,4 @@ inA <- read.table(dataset.txt, coClasses = cl)
 > dump(c("x", "y", "z"), file = "dumpdata.R")
 
 > source("dumpdata.R")
+
