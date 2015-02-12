@@ -50,3 +50,101 @@ above <- function(x, n = 10){ ## default value
 }
 
 ## !!!!!!!!!!!!!! FUNCTIONS CAN BE PASSED AS ARGUMENTS TO OTHER DUNCTIONS !!!!!!!!!!!!! ##
+
+## Name binding:
+## 	1. in Global Environment (GlobalEnv)
+##	2. then in namespaces of each of the packages loaded (base package is always the last)
+
+## function in a function
+
+make.power <- function(n){
+	pow <- function(x){
+		x^n
+	}
+	pow
+}
+
+>cube <- make.power(3)
+>square <- make.power(2)
+
+>cube(3)
+[1] 27
+
+>square(3)
+[1] 9
+
+> make.power(2)(4)
+[1] 16
+
+> ls(environment(cube))
+[1] "n"   "pow"
+> get("n", environment(cube))
+[1] 3
+> get("pow", environment(cube))
+function(x){
+    x^n
+  }
+<environment: 0x065e1968>
+> 
+
+> f <- function(x){
++   y<-2
++   y^2 + g(x)
++ }
+> 
+> g <- function(x){
++   x*y				## defined in global environment, so y is resolved from global env., not from function f() !!!!!, so y = 10 !!!!!
++ }
+> 
+> y <- 10
+> f(3)
+[1] 34
+> 
+
+## -------------------- Date and Time ------------------------ ##
+> x <- as.Date("1970-01-01")
+> x
+[1] "1970-01-01"
+> unclass(x)
+[1] 0
+> x <- as.Date("1980-01-01")
+> unclass(x)
+[1] 3652
+
+> weekdays(x)
+[1] "antradienis"
+> months(x)
+[1] "sausis"
+> quarters(x)
+[1] "Q1"
+
+> x <- Sys.time()
+> x
+[1] "2015-02-12 23:59:13 EET"
+> names(unclass(x))
+NULL
+> p<- as.POSIXlt(x)
+> names(unclass(p))
+ [1] "sec"    "min"    "hour"   "mday"   "mon"    "year"  
+ [7] "wday"   "yday"   "isdst"  "zone"   "gmtoff"
+> p$sec
+[1] 13.21883
+> p$yday
+[1] 42
+> p<- as.POSIXct(x)
+> names(unclass(p))
+NULL
+> p
+[1] "2015-02-12 23:59:13 EET"
+> 
+
+> x <- as.POSIXct("2012-10-25 01:00:00")
+> y <- as.POSIXct("2012-10-25 06:00:00", tz = "GMT") ## !!! time zone is taken into account
+> x-y
+Time difference of -8 hours
+> 
+
+> datestring<-c("1975/12/09 23:45", "2015/02/12 23:23")
+> x <- strptime(datestring, "%Y/%m/%d %H:%M")
+> x
+[1] "1975-12-09 23:45:00 EET" "2015-02-12 23:23:00 EET"
