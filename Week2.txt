@@ -148,3 +148,19 @@ Time difference of -8 hours
 > x <- strptime(datestring, "%Y/%m/%d %H:%M")
 > x
 [1] "1975-12-09 23:45:00 EET" "2015-02-12 23:23:00 EET"
+
+## ------------------- Single frame from multiple files ---------------------------- ##
+summary(files_full)
+tmp <- vector(mode = "list", length = length(files_full))
+summary(tmp)
+for (i in seq_along(files_full)) {
+        tmp[[i]] <- read.csv(files_full[[i]])
+}
+output <- do.call(rbind, tmp)
+
+## ###### ##
+> corvals<-c()
+> for(i in seq_along(t400)){
++     tmp<-t2[which(t2$ID == t400[i]),]
++     corvals<-c(corvals, cor(tmp$nitrate, tmp$sulfate))
++ }
