@@ -45,6 +45,6 @@ complete <- function(directory, id = 1:332) {
   output2 <- do.call(rbind, sids)
   colnames(output2)<-c("id","nobs")
   
-  output2
+  as.data.frame(output2)
   
 }
