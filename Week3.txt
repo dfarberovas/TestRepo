@@ -1,0 +1,315 @@
+## ------------ Week 3 ------------- ##
+
+	lapply - returns a list
+
+	sapply - return simplified results
+		if the result is a list where every element is length 1, then vector is returned
+		if the result is a list where every element is a vector of the same length (> 1), a matrix is returned
+		if it can't figure things out, a list is returned
+
+	apply  - apply a function over margins of an array
+		it is most often used to apply a function to the rows or columns of a matrix
+
+	tapply - apply a function over subset of a vector
+			
+	mapply - multivariate version of lapply 
+		of sorts which applies a function in parallel over a set of arguments
+		(two lists contain an values each for particular argument of the function)
+
+	split - takes a vector or other objects and splits it into groups determined by a factor or list of factors
+
+
+lapply(x,mean)
+## x - list
+## mean - function applied to each element of the list x
+
+> x<-list(a=1:5, b=rnorm(10))
+> lapply(x, mean)
+$a
+[1] 3
+
+$b
+[1] 0.2201319
+
+## -----
+> x<-1:4
+
+## runif with default parameters
+> lapply(x, runif)
+[[1]]
+[1] 0.2652701
+
+[[2]]
+[1] 0.5646309 0.8295516
+
+[[3]]
+[1] 0.4858250 0.7258580 0.7055273
+
+[[4]]
+[1] 0.5184170 0.2383281 0.5961485 0.6919796
+
+
+## min=0 and max=10 - runif parameters
+> lapply(x, runif, min=0, max=10)
+[[1]]
+[1] 8.574293
+
+[[2]]
+[1] 2.757576 5.067743
+
+[[3]]
+[1] 4.703662 2.258102 1.763107
+
+[[4]]
+[1] 0.3218456 0.9111704 8.4908849 2.8192781
+
+> 
+
+## --------- lapply anonymous function ------ ##
+> x<- list(a=matrix(1:4, 2,2), b = matrix(1:6, 3,2))
+> x
+$a
+     [,1] [,2]
+[1,]    1    3
+[2,]    2    4
+
+$b
+     [,1] [,2]
+[1,]    1    4
+[2,]    2    5
+[3,]    3    6
+
+> lapply(x, function(elt)elt[,1])  ## anonymous function in lapply !!!!!!!!
+$a
+[1] 1 2
+
+$b
+[1] 1 2 3
+
+## -------- sapply simplification ------ ##
+> x<- list(a = 1:4, b=rnorm(10), c=rnorm(20,1), d=rnorm(100,5))
+> lapply(x, mean)
+$a
+[1] 2.5
+
+$b
+[1] -0.3446131
+
+$c
+[1] 0.8962105
+
+$d
+[1] 4.884377
+
+> sapply(x, mean)
+         a          b          c          d 
+ 2.5000000 -0.3446131  0.8962105  4.8843766 
+> 
+
+## --------- apply ------------------ ##
+> x<- matrix(rnorm(20), 20, 10)
+> apply(x,2,mean) ## 2 - second dimension of a matrix (COLUMNS), so mean is calculated over columns
+ [1] 0.1021593 0.1021593 0.1021593 0.1021593 0.1021593 0.1021593
+ [7] 0.1021593 0.1021593 0.1021593 0.1021593
+> apply(x,1,mean) ## 1 - first dimension of a matrix (ROWS), so mean is calculate over rows
+ [1] -0.07865157  0.31605494  0.90730044  0.89272077  0.29882946
+ [6] -0.89178738  0.47298200 -0.19668295  2.43859781 -0.34046703
+[11]  0.28883129 -0.57588375  1.55876216 -1.84245651 -1.86104143
+[16] -0.24409373 -0.86636673  2.93457205 -1.75583376  0.58780026
+> 
+
+## optimized apply for a matrix
+rowSums  = apply(x, 1, sum)		## sum by rows
+rowMeans = apply(x, 1, mean) 	## mean by rows
+colSums  = apply(x, 2, sum)		## sum by columns
+colMeans = apply(x, 2, mean)	## mean by columns
+
+
+> x<- matrix(rnorm(20), 20, 10)
+> apply(x,1,quantile,probs=c(0.25, 0.75)) ## the result is matrix with rows 25% and 75%; and columns corresponding to each row
+           [,1]      [,2]      [,3]      [,4]      [,5]       [,6]     [,7]      [,8]     [,9]     [,10]     [,11]      [,12]    [,13]     [,14]     [,15]      [,16]      [,17]    [,18]     [,19]     [,20]
+25% -0.07865157 0.3160549 0.9073004 0.8927208 0.2988295 -0.8917874 0.472982 -0.196683 2.438598 -0.340467 0.2888313 -0.5758838 1.558762 -1.842457 -1.861041 -0.2440937 -0.8663667 2.934572 -1.755834 0.5878003
+75% -0.07865157 0.3160549 0.9073004 0.8927208 0.2988295 -0.8917874 0.472982 -0.196683 2.438598 -0.340467 0.2888313 -0.5758838 1.558762 -1.842457 -1.861041 -0.2440937 -0.8663667 2.934572 -1.755834 0.5878003
+
+
+## ------------------------ mapply -------------- ##
+> l<-list(rep(1,4), rep(2,3), rep(3,2), rep(4,1))
+> l
+[[1]]
+[1] 1 1 1 1
+
+[[2]]
+[1] 2 2 2
+
+[[3]]
+[1] 3 3
+
+[[4]]
+[1] 4
+
+> mapply(rep, 1:4, 4:1) ## rep has two arguments, first list (1:4) is for first argument, second list (4:1) is for second argument
+[[1]]
+[1] 1 1 1 1
+
+[[2]]
+[1] 2 2 2
+
+[[3]]
+[1] 3 3
+
+[[4]]
+[1] 4
+
+
+> noise <- function(n, mean, sd){
++     rnorm(n,mean, sd)
++ }
+> noise(5,1,2)
+[1]  3.1619497 -1.1203001  0.2903429  1.0444894  2.7014192
+> mapply(noise, 1:5, 1:5, 2)								##Instant vectorization
+[[1]]
+[1] -0.2521639												##noise(1,1,2)
+
+[[2]]
+[1] 2.526561 2.921028										##noise(2,2,2)
+
+[[3]]
+[1] 4.214900 3.892029 2.327983								##noise(3,3,2)
+
+[[4]]
+[1] 4.758098 4.059234 7.087028 1.185004						##noise(4,4,2)
+
+[[5]]
+[1] 4.529174 6.376195 3.734942 6.353031 4.341168			##noise(5,5,2)
+
+
+## ------------------------ tapply ------------------- ##
+## apply by factor
+> x<-c(rnorm(10),runif(10),rnorm(10,1))
+> f<-gl(3,10)
+> f
+ [1] 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3
+Levels: 1 2 3
+> tapply(x, f, mean)				## 1 - for rnorm(10), 2 - for runif(10), 3 - rnorm(10,1)
+        1         2         3 
+0.3060491 0.4221109 0.6406943 		## mean(rnorm(10)), mean(runif(10)), mean(rnorm(10,1))
+> 
+
+> tapply(x, f, mean, simplify = FALSE) ## simplify = FALSE, so result is a list
+$`1`
+[1] 0.3060491
+
+$`2`
+[1] 0.4221109
+
+$`3`
+[1] 0.6406943
+
+## ------------------ split ------------------------- ##
+> x<-c(rnorm(10),runif(10),rnorm(10,1))
+> f<-gl(3,10)
+> f
+ [1] 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3
+Levels: 1 2 3
+
+> split(x,f)			## three factors (levels) so three lists
+$`1`
+ [1]  1.76469942  1.23076499  1.56275681 -1.41789156 -0.09841239 -1.62764697  1.16959659
+ [8] -0.95701279  0.26257866  1.17105874
+
+$`2`
+ [1] 0.34929969 0.46582059 0.98730598 0.16588912 0.07786536 0.23341007 0.73493818 0.16631469
+ [9] 0.68776023 0.35250514
+
+$`3`
+ [1]  1.0013166  0.4966245  1.2215614  0.2459414  0.2551711  0.2488738 -0.3323019  1.4016530
+ [9]  0.9481545  0.9199490
+
+> lapply(split(x,f),mean)	## lapply with split equivalent to tapply(x,f,mean)
+$`1`
+[1] 0.3060491
+
+$`2`
+[1] 0.4221109
+
+$`3`
+[1] 0.6406943
+
+> head(airquality)
+  Ozone Solar.R Wind Temp Month Day
+1    41     190  7.4   67     5   1
+2    36     118  8.0   72     5   2
+3    12     149 12.6   74     5   3
+4    18     313 11.5   62     5   4
+5    NA      NA 14.3   56     5   5
+6    28      NA 14.9   66     5   6
+> 
+> s<-split(airquality,airquality$Month)
+
+> colMeans(s$'5'[,c("Wind","Solar.R")])
+    Wind  Solar.R 
+11.62258       NA 
+
+> lapply(s,function(x)colMeans(x[,c("Ozone", "Solar.R", "Wind")])) ## with anonymous function
+$`5`
+   Ozone  Solar.R     Wind 
+      NA       NA 11.62258 
+
+$`6`
+    Ozone   Solar.R      Wind 
+       NA 190.16667  10.26667 
+
+$`7`
+     Ozone    Solar.R       Wind 
+        NA 216.483871   8.941935 
+
+$`8`
+   Ozone  Solar.R     Wind 
+      NA       NA 8.793548 
+
+$`9`
+   Ozone  Solar.R     Wind 
+      NA 167.4333  10.1800 
+
+> sapply(s,function(x)colMeans(x[,c("Ozone", "Solar.R", "Wind")], na.rm=TRUE))
+                5         6          7          8         9
+Ozone    23.61538  29.44444  59.115385  59.961538  31.44828
+Solar.R 181.29630 190.16667 216.483871 171.857143 167.43333
+Wind     11.62258  10.26667   8.941935   8.793548  10.18000
+> 
+
+## ----------- split on More than One Level ------------- ##
+> x<-rnorm(10)
+> f1<-gl(2,5)
+> f2<-gl(5,2)
+> f1
+ [1] 1 1 1 1 1 2 2 2 2 2
+Levels: 1 2
+> f2
+ [1] 1 1 2 2 3 3 4 4 5 5
+Levels: 1 2 3 4 5
+> interaction(f1,f2)
+ [1] 1.1 1.1 1.2 1.2 1.3 2.3 2.4 2.4 2.5 2.5
+Levels: 1.1 2.1 1.2 2.2 1.3 2.3 1.4 2.4 1.5 2.5
+
+> str(split(x,list(f1,f2)))
+List of 10
+ $ 1.1: num [1:2] 0.279 -1.002
+ $ 2.1: num(0) 
+ $ 1.2: num [1:2] -0.683 1.998
+ $ 2.2: num(0) 
+ $ 1.3: num 0.0215
+ $ 2.3: num 1.2
+ $ 1.4: num(0) 
+ $ 2.4: num [1:2] -0.382 0.855
+ $ 1.5: num(0) 
+ $ 2.5: num [1:2] -2.192 -0.478
+ 
+ > str(split(x,list(f1,f2), drop=TRUE)) ## drop empty levels
+List of 6
+ $ 1.1: num [1:2] 0.279 -1.002
+ $ 1.2: num [1:2] -0.683 1.998
+ $ 1.3: num 0.0215
+ $ 2.3: num 1.2
+ $ 2.4: num [1:2] -0.382 0.855
+ $ 2.5: num [1:2] -2.192 -0.478
