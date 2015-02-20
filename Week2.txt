@@ -1,5 +1,8 @@
 ## Week 2 ##
 
+## About functions in R
+## http://adv-r.had.co.nz/Functionals.html
+
 > x <- 5
 > if(x > 3){y <- 10}else{y <- 0}
 > y
