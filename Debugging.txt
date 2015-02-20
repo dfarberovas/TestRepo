@@ -1,0 +1,13 @@
+## Debugging 
+
+	message   - generic notification; execution continues. 				message function
+	warning   - something wrong but not fatal; execution continues		warning function
+	error     - fatal problem; execution stops							stop function
+	condition - something unexpected; creatable
+
+## functions
+traceback 	- prints call stack
+debug		- flags function for debug
+browse		- puts function into debug mode when the function is called
+trace		- allows to insert code snippet into existing function
+recover		- allows to fall into debug

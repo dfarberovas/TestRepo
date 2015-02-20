@@ -1,7 +1,12 @@
 ## Week 2 ##
 
+<<<<<<< HEAD
 ## About functions in R
 ## http://adv-r.had.co.nz/Functionals.html
+=======
+## Practice assignment warm-up
+## https://github.com/rdpeng/practice_assignment/blob/master/practice_assignment.rmd
+>>>>>>> a4e65d809f688c5ddfd10a78c0d5970ea4b725c4
 
 > x <- 5
 > if(x > 3){y <- 10}else{y <- 0}
