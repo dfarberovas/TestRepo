@@ -15,3 +15,31 @@ sample() ## random sample from given vector
 
 > sample(1:10, replace=TRUE) ## repeated numbers !!!
  [1] 6 3 8 7 9 7 5 5 4 5
+ 
+ ## ------------------- Profile ----------------------- ##
+ user time 	  (UT)	- CPU time
+ elapsed time (ET)	- wall clock time (you see the result)
+ ET > UT => CPU idle too much
+ UT < ET => multi-CPU with parallel execution
+ 
+ > hilbert <- function(x){
++     i<-1:x
++     1 / outer(i-1,i,"+")
++ }
+> x<-hilbert(1000)
+> system.time(svd(x))
+   user  system elapsed 
+   2.73    0.01    2.83 
+
+ > system.time({
++     n<-1000
++     r<-numeric(n)
++     for(i in 1:n){
++         x<-rnorm(n)
++         r[i]<-mean(x)
++     }
++ })
+   user  system elapsed 
+   0.11    0.00    0.10
+ 
+ 
