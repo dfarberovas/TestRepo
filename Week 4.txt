@@ -43,3 +43,9 @@ sample() ## random sample from given vector
    0.11    0.00    0.10
  
  
+ Rprof()
+ summaryRprof
+	by.total	- divides time spent in each function by the total run time
+	by.self		- does the same but first subtracts out time spent in function above in the call stack
+
+ 
