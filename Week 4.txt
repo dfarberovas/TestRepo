@@ -1,4 +1,31 @@
-## Week 4 ##
+## Week4 ##
+summary()
+str()
+head()
+tail()
+
+## ---------------- Simulation ------------------ ##
+rnorm 		random normal variates with a given mean and standard deviation
+rpois		random Poisson variates whith a given rate
+
+dnorm		evaluate the Normal probability denstity (with a given SD) at a point or a vector of points
+pnorm		evaluate cumulative distribution function for a Normal distribution 
+
+	d - for distribution 
+	r - for random number generation
+	p - for cumulative distribution
+	q - for quantile function
+	
+set.seed(x) ## sets seed for random number generation
+
+rpois (n, lambda)  ## n - number of values; lambda - rate 
+poisson distribution => mean is equal rate
+
+ppois(q, lambda, lower.tail = TRUE, log.p = FALSE)  ## q - value, lambda - rate
+ppois(2,2) 	## probability of less than 2 (<=2) if rate is equal 2
+
+
+## -------------------------------------------------------------------- ##
 
 sample() ## random sample from given vector
 > sample(1:10,5)
