@@ -1,0 +1,37 @@
+Raw data -> Processing Script -> tidy data -> data analysis -> data communication
+
+code book - explanation of variables
+recipe how you make raw data tidy
+
+"Right" raw data:
+	1. Ran no software on the data
+	2. Did not manipulate any of the numbers in the data
+	3. Did not remove any data from data set
+	4. Did not summarize the data in any way
+
+Tidy data:
+	1. Each variable you measure should be in one column
+	2. Each different observation of that variable should be in a different row
+	3. One table for each "kind" of variable 
+	4. Multiple tables should include column that allows them to be linked
+	
+The Code Book:
+	1. Information about variables (including units)
+	2. Information about summary choices (mean or median)
+	3. Information about experimental study design (obtained from DB or observations etc.)
+
+---------------------------------------------------------------------------------------------
+
+if (!file.exists("data"){
+	dir.create("data")
+}
+
+fileUrl<-"https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl, destfile=".\\data\\cameras.csv")
+list.files(".\\data") ## list files in the specified directory
+
+## !!!! ##
+## Note the download date to keep version of the file
+> dateDownload<-date()
+> dateDownload
+[1] "Wed Apr 08 17:21:50 2015"
