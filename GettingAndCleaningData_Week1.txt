@@ -35,3 +35,255 @@ list.files(".\\data") ## list files in the specified directory
 > dateDownload<-date()
 > dateDownload
 [1] "Wed Apr 08 17:21:50 2015"
+
+
+read.table()
+Parameters: file, header, sep, row.names, nrows, quote="" ## remove quotation marks ` or "
+read.csv() ## sep = "'", header=TRUE 
+read.csv2()
+
+> cameraData<-read.table("./data/cameras.csv", sep=",", header=TRUE)
+
+## --------------------------- Reading EXCEL data ------------------------ ##
+library(xlsx
+fileUrl<-"https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD"
+download.file(fileUrl, destfile=".\\data\\cameras.xlsx")
+cameraData<-read.xlsx(".\\data\\cameras.xlsx", sheetIndex=1, headers=TRUE)
+
+## --------------------------- Reading XML ------------------------------- ##
+ > install.packages("XML")
+ > library(XML)
+ > fileUrl<-"http://www.w3schools.com/xml/simple.xml"
+ > doc<-xmlTreeParse(fileUrl,useInternal=TRUE)
+ > rootNode<-xmlRoot(doc)
+> xmlName(rootNode)
+[1] "breakfast_menu"
+> names(rootNode)
+  food   food   food   food   food 
+"food" "food" "food" "food" "food"
+> rootNode[[1]]
+<food>
+  <name>Belgian Waffles</name>
+  <price>$5.95</price>
+  <description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
+  <calories>650</calories>
+</food> 
+> rootNode[[1]][[1]]
+<name>Belgian Waffles</name> 
+> 
+> xmlSApply(rootNode,xmlValue)
+                                                                                                                    food 
+                              "Belgian Waffles$5.95Two of our famous Belgian Waffles with plenty of real maple syrup650" 
+                                                                                                                    food 
+                   "Strawberry Belgian Waffles$7.95Light Belgian waffles covered with strawberries and whipped cream900" 
+                                                                                                                    food 
+"Berry-Berry Belgian Waffles$8.95Light Belgian waffles covered with an assortment of fresh berries and whipped cream900" 
+                                                                                                                    food 
+                                               "French Toast$4.50Thick slices made from our homemade sourdough bread600" 
+                                                                                                                    food 
+                        "Homestyle Breakfast$6.95Two eggs, bacon or sausage, toast, and our ever-popular hash browns950" 
+
+XPath basics
+/node 	- Top level node
+//node	- Node at any level
+node[@attr-name] 		- Node with an attribute name
+node[@attr-name='bob']	- Node with attribute name attr-name='bob'
+
+> xpathSApply(rootNode,"//name",xmlValue)
+[1] "Belgian Waffles"            
+[2] "Strawberry Belgian Waffles" 
+[3] "Berry-Berry Belgian Waffles"
+[4] "French Toast"               
+[5] "Homestyle Breakfast" 
+
+> xpathSApply(rootNode,"//price",xmlValue)
+[1] "$5.95" "$7.95" "$8.95" "$4.50" "$6.95"
+
+> fileUrl<-"http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens"
+> doc<-htmlTreeParse(fileUrl,useInternal=TRUE)
+> scores<-xpathSApply(doc,"//li[@class='score']",xmlValue)
+> teams<-xpathSApply(doc,"//li[@class='team-name']",xmlValue)
+
+## --------------------------- JSON -------------------------- ##
+> install.packages("jsonlite")
+> library(jsonlite)
+jsonData<-fromJSON("https://api.github.com/users/jtleek/repos")
+> names(jsonData)
+ [1] "id"                "name"             
+ [3] "full_name"         "owner"            
+ [5] "private"           "html_url"         
+ [7] "description"       "fork"             
+ [9] "url"               "forks_url"        
+[11] "keys_url"          "collaborators_url"
+[13] "teams_url"         "hooks_url"        
+[15] "issue_events_url"  "events_url"       
+[17] "assignees_url"     "branches_url"   
+
+> names(jsonData$owner)
+ [1] "login"               "id"                 
+ [3] "avatar_url"          "gravatar_id"        
+ [5] "url"                 "html_url"           
+ [7] "followers_url"       "following_url"      
+ [9] "gists_url"           "starred_url"        
+[11] "subscriptions_url"   "organizations_url"  
+[13] "repos_url"           "events_url"         
+[15] "received_events_url" "type"               
+[17] "site_admin"         
+
+> jsonData$owner$login
+ [1] "jtleek" "jtleek" "jtleek" "jtleek" "jtleek" "jtleek"
+ 
+> myjson<-toJSON(iris, pretty=TRUE)
+> cat(myjson)
+[
+  {
+    "Sepal.Length": 6.3,
+    "Sepal.Width": 2.5,
+    "Petal.Length": 5,
+    "Petal.Width": 1.9,
+    "Species": "virginica"
+  },
+  {
+    "Sepal.Length": 6.5,
+    "Sepal.Width": 3,
+    "Petal.Length": 5.2,
+    "Petal.Width": 2,
+    "Species": "virginica"
+  },
+  ...
+ 
+ ## --------------------------- data.table package ---------------------- ##
+ > install.packages("data.table")
+ > library(data.table)
+ 
+> DF=data.frame(x=rnorm(9),y=rep(c("a","b","c"),each=3),z=rnorm(9))
+> head(DF)
+           x y          z
+1  0.2155653 a  0.5002376
+2  0.1427837 a  1.1662573
+3 -0.2033856 a -1.4874787
+4 -1.3255901 b -0.4691974
+5 -1.4994033 b  0.3187620
+6  1.4375690 b  1.4242531
+> 
+
+> DT=data.table(x=rnorm(9),y=rep(c("a","b","c"),each=3),z=rnorm(9))
+> head(DT)
+            x y          z
+1:  0.6304576 a -1.8221845
+2: -0.5461596 a -0.9645912
+3: -0.3551687 a  0.3545748
+4:  0.1297204 b  0.9239800
+5: -0.2577579 b -0.5710309
+6: -0.4024082 b -1.1874980
+
+> tables() ## to see all table in memory
+
+> DT[2,]
+            x y          z
+1: -0.5461596 a -0.9645912
+
+> DT[DT$y=="a",]
+            x y          z
+1:  0.6304576 a -1.8221845
+2: -0.5461596 a -0.9645912
+3: -0.3551687 a  0.3545748
+> 
+
+> DT[c(2,3)] ## second and third rows	
+            x y          z
+1: -0.5461596 a -0.9645912
+2: -0.3551687 a  0.3545748
+
+> DT[,list(mean(x),sum(z))] ## mean of column x and sum of column z
+            V1        V2
+1: -0.02323569 -2.243367
+> 
+
+> DT[,w:=z^2] ## add new column w to data table
+> DT
+            x y           z           w
+1:  0.6304576 a -1.82218451 3.320356392
+2: -0.5461596 a -0.96459115 0.930436088
+3: -0.3551687 a  0.35457478 0.125723271
+4:  0.1297204 b  0.92397995 0.853738955
+5: -0.2577579 b -0.57103087 0.326076254
+
+> DT[,m:={tmp<-(x+z); log2(tmp+5)}] ## multiple operations adding new column m
+> DT
+            x y           z           w        m
+1:  0.6304576 a -1.82218451 3.320356392 1.929137
+2: -0.5461596 a -0.96459115 0.930436088 1.802917
+3: -0.3551687 a  0.35457478 0.125723271 2.321757
+4:  0.1297204 b  0.92397995 0.853738955 2.597817
+5: -0.2577579 b -0.57103087 0.326076254 2.060466
+
+> DT[,a:=x>0] ## a is a binary column
+> DT
+            x y           z           w        m     a
+1:  0.6304576 a -1.82218451 3.320356392 1.929137  TRUE
+2: -0.5461596 a -0.96459115 0.930436088 1.802917 FALSE
+3: -0.3551687 a  0.35457478 0.125723271 2.321757 FALSE
+4:  0.1297204 b  0.92397995 0.853738955 2.597817  TRUE
+5: -0.2577579 b -0.57103087 0.326076254 2.060466 FALSE
+
+> DT[,b:=mean(x+w), by=a] ## mean value is groupped by a collumn. when a = TRUE mean = 2.1531, when a = FLSE mean = -0.01822
+> DT
+            x y           z           w        m     a           b
+1:  0.6304576 a -1.82218451 3.320356392 1.929137  TRUE  2.15310031
+2: -0.5461596 a -0.96459115 0.930436088 1.802917 FALSE -0.01822597
+3: -0.3551687 a  0.35457478 0.125723271 2.321757 FALSE -0.01822597
+4:  0.1297204 b  0.92397995 0.853738955 2.597817  TRUE  2.15310031
+5: -0.2577579 b -0.57103087 0.326076254 2.060466 FALSE -0.01822597
+6: -0.4024082 b -1.18749798 1.410151462 1.769811 FALSE -0.01822597
+7: -1.4364076 c -0.33820867 0.114385105 1.689471 FALSE -0.01822597
+8:  1.6632943 c  1.28186125 1.643168252 2.990075  TRUE  2.15310031
+9:  0.3653086 c  0.07972989 0.006356855 2.444942  TRUE  2.15310031
+
+> set.seed(123)
+> DT<-data.table(x=sample(letters[1:3], 1E5, TRUE))
+> DT[, .N, by=x] ## .N count the number of times each letter is present in DT
+   x     N
+1: a 33387
+2: c 33201
+3: b 33412
+> 
+
+> DT <- data.table(x=rep(c("a","b","c"),each=100), y= rnorm(300))
+> setkey(DT, x) ## key is set to column x
+> DT['a'] ## take all rows where x == 'a', the key is used
+     x           y
+  1: a  0.25958973
+  2: a  0.91751072
+  3: a -0.72231834
+  4: a -0.80828402
+  5: a -0.14135202
+  6: a  2.25701345
+  7: a -2.37955015
+  
+
+> DT1<-data.table(x=c('a','a','b','dt1'), y=1:4)
+> DT2<-data.table(x=c('a','b','dt2'),z=5:7)
+> setkey(DT1,x)
+> setkey(DT2,x)
+> DT1
+     x y
+1:   a 1
+2:   a 2
+3:   b 3
+4: dt1 4
+> DT2
+     x z
+1:   a 5
+2:   b 6
+3: dt2 7
+> merge(DT1,DT2) ## merge to data tables by key
+   x y z
+1: a 1 5
+2: a 2 5
+3: b 3 6
+> 
+
+>fread(file) ## read file from disk 
+
+## data tables must be copied by special copy command, because otherwise data tables are copied by reference !!!! (pointer to the same object)
