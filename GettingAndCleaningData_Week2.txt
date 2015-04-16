@@ -1,0 +1,53 @@
+## ----------------- Reading from MySQL ------------------ ##
+> instal.pacjakges("RMySQL")
+>library(RMySQL)
+
+> ucscDb<-dbConnect(MySQL(), user="genome", host="genome-mysql.cse.ucsc.edu")
+> result<-dbGetQuery(ucscDb, "show databases;"); dbDisconnect(ucscDb);
+[1] TRUE
+> result
+              Database
+1   information_schema
+2              ailMel1
+3              allMis1
+4              anoCar1
+5              anoCar2
+6              anoGam1
+
+> hg19<-dbConnect(MySQL(), user="genome", db="hg19", host="genome-mysql.cse.ucsc.edu")
+> allTables<-dbListTables(hg19)
+> length(allTables)
+[1] 11012
+> allTables[1:5]
+[1] "HInv"         "HInvGeneMrna" "acembly"      "acemblyClass"
+[5] "acemblyPep"  
+> 
+
+> dbListFields(hg19, "affyU133Plus2")
+ [1] "bin"         "matches"     "misMatches"  "repMatches"  "nCount"     
+ [6] "qNumInsert"  "qBaseInsert" "tNumInsert"  "tBaseInsert" "strand"     
+[11] "qName"       "qSize"       "qStart"      "qEnd"        "tName"      
+[16] "tSize"       "tStart"      "tEnd"        "blockCount"  "blockSizes" 
+[21] "qStarts"     "tStarts"    
+
+> dbGetQuery(hg19, "select count(*) from affyU133Plus2")
+  count(*)
+1    58463
+> 
+
+> affyData<- dbReadTable(hg19, "affyU133Plus2")
+
+> query<-dbSendQuery(hgq9, "select * from affyU133Plus2 where misMatches between 1 and 3")
+> affyMis<-fetch(query)
+> quantile(affyMis$misMatches)
+  0%  25%  50%  75% 100% 
+   1    1    2    2    3 
+> 
+> affyMisSmall<- fetch(query, n=10)
+> dim(affyMisSmall)
+[1] 10 22
+> dim(affyMis)
+[1] 500  22
+> 
+> dbClearResult(query) ## clear query from the server
+[1] TRUE
