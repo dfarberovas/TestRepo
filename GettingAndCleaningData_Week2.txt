@@ -51,3 +51,99 @@
 > 
 > dbClearResult(query) ## clear query from the server
 [1] TRUE
+
+## ------------------------ HDF5 ---------------------------- ##
+
+HDF - hierarchical data format
+
+> source("http://bioconductor.org/biocLite.R")
+> biocLite("rhdf5")
+> library(rhdf5)
+> created=h5createFile(".\\data\\example.h5") ## create file
+
+> created=h5createGroup(".\\data\\example.h5", "foo")
+> created=h5createGroup(".\\data\\example.h5", "baa")
+> created=h5createGroup(".\\data\\example.h5", "foo/foobaa")
+> h5ls(".\\data\\example.h5")
+  group   name     otype dclass dim
+0     /    baa H5I_GROUP           
+1     /    foo H5I_GROUP           
+2  /foo foobaa H5I_GROUP           
+> 
+> A=matrix(1:10, nr=5, nc=2)
+> h5write(A,".\\data\\example.h5","foo/A")
+> B=array(seq(0.1,2.0,by=0.1),dim=c(5,2,2))
+> attr(B,"scale")<-"liter"
+> h5write(B,".\\data\\example.h5","foo/foobaa/B")
+> h5ls(".\\data\\example.h5")
+        group   name       otype  dclass       dim
+0           /    baa   H5I_GROUP                  
+1           /    foo   H5I_GROUP                  
+2        /foo      A H5I_DATASET INTEGER     5 x 2
+3        /foo foobaa   H5I_GROUP                  
+4 /foo/foobaa      B H5I_DATASET   FLOAT 5 x 2 x 2
+
+> df=data.frame(1L:5L,seq(0,1,length.out=5),c("ab","cde","fghi","a","s"), stringAsFactors=FALSE) 
+> h5write(df,".\\data\\example.h5","df") ## write data set
+> h5ls(".\\data\\example.h5")
+        group   name       otype   dclass       dim
+0           /    baa   H5I_GROUP                   
+1           /     df H5I_DATASET COMPOUND         5
+2           /    foo   H5I_GROUP                   
+3        /foo      A H5I_DATASET  INTEGER     5 x 2
+4        /foo foobaa   H5I_GROUP                   
+5 /foo/foobaa      B H5I_DATASET    FLOAT 5 x 2 x 2
+
+> readA=h5read(".\\data\\example.h5", "foo/A")
+> readB=h5read(".\\data\\example.h5", "foo/foobaa/B")
+> readdf=h5read(".\\data\\example.h5","df")
+> readA
+     [,1] [,2]
+[1,]    1    6
+[2,]    2    7
+[3,]    3    8
+[4,]    4    9
+[5,]    5   10
+
+> readB
+, , 1
+
+     [,1] [,2]
+[1,]  0.1  0.6
+[2,]  0.2  0.7
+[3,]  0.3  0.8
+[4,]  0.4  0.9
+[5,]  0.5  1.0
+
+, , 2
+
+     [,1] [,2]
+[1,]  1.1  1.6
+[2,]  1.2  1.7
+[3,]  1.3  1.8
+[4,]  1.4  1.9
+[5,]  1.5  2.0
+
+> readdf
+  X1L.5L seq.0..1..length.out...5. c..ab....cde....fghi....a....s..
+1      1                      0.00                                2
+2      2                      0.25                                3
+3      3                      0.50                                4
+4      4                      0.75                                1
+5      5                      1.00                                5
+> 
+
+> h5write(c(12,13,14),".\\data\\example.h5","foo/A",index=list(1:3,1)) ##overwrite foo/A partly
+> h5read(".\\data\\example.h5","foo/A")
+     [,1] [,2]
+[1,]   12    6
+[2,]   13    7
+[3,]   14    8
+[4,]    4    9
+[5,]    5   10
+
+> h5read(".\\data\\example.h5","foo/A", index=list(1:3,1)) ## read part of data set
+     [,1]
+[1,]   12
+[2,]   13
+[3,]   14
