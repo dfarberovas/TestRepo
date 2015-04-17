@@ -147,3 +147,19 @@ HDF - hierarchical data format
 [1,]   12
 [2,]   13
 [3,]   14
+
+
+## ---------------------------------- Reading API ----------------- ##
+## Twitter API
+myapp = oath_app("twitter", 
+					key = "yourConsummerKeyHere",
+					secrete="yourConsumerSecreteHere")
+sig = sign_oaauth1.0(myapp,
+						token = "yourTokenHere",
+						token_secrete = "yourTokenSecreteHere")
+homeTL = GET("https://api.twitter.com/1.1/statuses/home_timeLine.json", sig)
+
+json1 = content(homeTL)
+json2 = jsonLite::fromJSON(toJSON(json1)) ## jsonLite creates a data frame
+json2[1, 1:4]
+
