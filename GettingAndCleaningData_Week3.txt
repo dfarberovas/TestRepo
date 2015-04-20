@@ -297,3 +297,106 @@ B    L                 27 14 29 19 29 31 41 20 44
 > print(object.size(fakeData), units="Mb")
 0.8 Mb
 > 
+
+## ------------------------ Creating variables --------------------- ##
+Missingness indicator
+"Cutting up" quantitative variablesApplying transforms
+
+## sequence
+> s1<-seq(1,10, by =2); s1
+[1] 1 3 5 7 9
+> s2<-seq(1,10,length=3);s2
+[1]  1.0  5.5 10.0
+> x<-c(1,3,8,25,100); seq(along=x)
+[1] 1 2 3 4 5
+
+> restData$nearMe <- restData$neighborhood %in% c("Roland Park", "Homeland")
+> table(restData$nearMe)
+
+FALSE  TRUE 
+ 1314    13 
+> 
+
+> restData$zipWrong = ifelse(restData$zipCode < 0, TRUE, FALSE)		## condition, condition true, condition false
+> table(restData$zipWrong, restData$zipCode < 0)
+       
+        FALSE TRUE
+  FALSE  1326    0
+  TRUE      0    1
+> 
+
+
+##v cut - cutting provides factor variables
+> restData$zipCodeGroups = cut(restData$zipCode, breaks=quantile(restData$zipCode))	## categorical  variable
+> table(restData$zipCodeGroups)
+
+(-2.123e+04,2.12e+04]  (2.12e+04,2.122e+04] (2.122e+04,2.123e+04] 
+                  337                   375                   282 
+(2.123e+04,2.129e+04] 
+                  332 
+
+> table(restData$zipCodeGroups, restData$zipCode)			## zipCodeGroups and zipCode
+                       
+                        -21226 21201 21202 21205 21206 21207 21208 21209 21210
+  (-2.123e+04,2.12e+04]      0   136   201     0     0     0     0     0     0
+  (2.12e+04,2.122e+04]       0     0     0    27    30     4     1     8    23
+  (2.122e+04,2.123e+04]      0     0     0     0     0     0     0     0     0
+  (2.123e+04,2.129e+04]      0     0     0     0     0     0     0     0     0
+  
+ 
+## for easier cutting use Hmisc library 
+ > library(Hmisc)
+ > restData$zipGroups = cut2(restData$zipCode, g=4)
+> table(restData$zipGroups)
+
+[-21226,21205) [ 21205,21220) [ 21220,21227) [ 21227,21287] 
+           338            375            300            314 
+> 
+
+## creating factor variable
+> restData$zcf = factor(restData$zipCode)
+> restData$zcf[1:10]
+ [1] 21206 21231 21224 21211 21223 21218 21205 21211 21205 21231
+32 Levels: -21226 21201 21202 21205 21206 21207 21208 21209 21210 ... 21287
+> class(restData$zcf)
+[1] "factor"
+> 
+## levels of factor variables
+> yesno = sample(c("yes", "no"), size=10, replace = TRUE)
+> yesno
+ [1] "yes" "no"  "yes" "no"  "yes" "yes" "no"  "no"  "no"  "no" 
+> yesnofac=factor(yesno, levels=c("yes", "no"))
+> yesnofac
+ [1] yes no  yes no  yes yes no  no  no  no 
+Levels: yes no
+> relevel(yesnofac, ref="yes")
+ [1] yes no  yes no  yes yes no  no  no  no 
+Levels: yes no
+> as.numeric(yesnofac)
+ [1] 1 2 1 2 1 1 2 2 2 2
+> 
+
+## mutate
+> library(plyr)
+> library(Hmisc)
+> rerstData2= mutate(restData, zipGroups = cut2(zipCode, g=4)) ## new data.frame
+> table(rerstData2$zipGroups)
+
+[-21226,21205) [ 21205,21220) [ 21220,21227) [ 21227,21287] 
+           338            375            300            314 
+> 
+
+## Common transforms
+
+abs(x)
+sqrt(x)
+ceiling(x) 	## ceiling(3.475) = 4
+floor(x)	## floor(3.475)	  = 30
+round(x, digits=n)	## round(3.475,digits=2) = 3.48
+signif(x, digits=n)	## signif(3.475, digits=2) = 3.50%
+cos(x), sin(x)
+log(x), log2(x), log10(x)
+exp(x)
+
+## http://statmethods.net/management/functions.html
+## http://www.biostat.jhsph.edu/~ajaffe/lec_winterR/Lecture%202.pdf
