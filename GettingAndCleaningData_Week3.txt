@@ -1,0 +1,299 @@
+## ------------------------ Subsetting and sorting ---------------------------- ##
+> set.seed(13435)
+> X<-data.frame("var1"=sample(1:5), "var2"=sample(6:10), "var3"=sample(11:15))
+> X
+  var1 var2 var3
+1    2    8   15
+2    3    7   12
+3    5    6   14
+4    1   10   11
+5    4    9   13
+
+> X<-X[sample(1:5),]
+> X$var2[c(1,3)]=NA
+> X
+  var1 var2 var3
+4    1   NA   11
+1    2    8   15
+5    4   NA   13
+3    5    6   14
+2    3    7   12
+> 
+
+> X[,1]			## getting column
+[1] 1 2 4 5 3
+> X[,"var1"]	## getting column
+[1] 1 2 4 5 3	
+> 
+> X[1:2, "var2"]## getting first and second row of column 2 (var2)
+[1] NA  8
+> 
+> X[(X$var1<=3 & X$var3 > 11),]	## condition with AND
+  var1 var2 var3
+1    2    8   15
+2    3    7   12
+> X[(X$var1<=3 | X$var3 > 15),]	## condition with OR
+  var1 var2 var3
+4    1   NA   11
+1    2    8   15
+2    3    7   12
+
+> X[which(X$var2 > 6),]	## ignores NA
+  var1 var2 var3
+1    2    8   15
+2    3    7   12
+
+> sort(X$var1)						## sort column
+[1] 1 2 3 4 5
+> sort(X$var1, decreasing=TRUE)		## sort with order
+[1] 5 4 3 2 1
+> sort(X$var2, na.last=TRUE)		## sort with NA
+[1]  6  7  8 NA NA
+> sort(X$var2, decreasing=TRUE, na.last=TRUE)
+[1]  8  7  6 NA NA
+
+> X[order(X$var1),]					## order rows by column value
+  var1 var2 var3
+4    1   NA   11
+1    2    8   15
+2    3    7   12
+5    4   NA   13
+3    5    6   14
+
+> X[order(X$var1, X$var3),]			## multiple order by columns
+
+##		plyr ##
+> library(plyr)
+> arrange(X,var1)					## order by column
+  var1 var2 var3
+1    1   NA   11
+2    2    8   15
+3    3    7   12
+4    4   NA   13
+5    5    6   14
+> arrange(X,desc(var1))				## order by column with ACS/DESC
+  var1 var2 var3
+1    5    6   14
+2    4   NA   13
+3    3    7   12
+4    2    8   15
+5    1   NA   11
+> 
+
+> X$var4 <- rnorm(5)			## add column to data.frame
+> X
+  var1 var2 var3        var4
+4    1   NA   11 -0.02166735
+1    2    8   15 -0.17411953
+5    4   NA   13  0.23900438
+3    5    6   14 -1.83245959
+2    3    7   12 -0.03718739
+> 
+> Y<-cbind(rnorm(5), X)			## add column. New data.frame is created
+> Y
+    rnorm(5) var1 var2 var3        var4
+4 -0.4405170    1   NA   11 -0.02166735
+1 -1.4482636    2    8   15 -0.17411953
+5 -0.5182457    4   NA   13  0.23900438
+3  0.7585272    5    6   14 -1.83245959
+2  0.2849353    3    7   12 -0.03718739
+> 
+> Z<-rbind(Y,rnorm(5))			## add row. New data.frame is created
+> Z
+    rnorm(5)       var1       var2      var3        var4
+4 -0.4405170  1.0000000         NA 11.000000 -0.02166735
+1 -1.4482636  2.0000000  8.0000000 15.000000 -0.17411953
+5 -0.5182457  4.0000000         NA 13.000000  0.23900438
+3  0.7585272  5.0000000  6.0000000 14.000000 -1.83245959
+2  0.2849353  3.0000000  7.0000000 12.000000 -0.03718739
+6 -1.5378398 -0.3652188 -0.4338298 -1.577484 -1.34954882
+
+
+## ----------------------- Summarizing Data ------------------------ ##
+> fileUrl<-"https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD"
+> download.file(fileUrl, destfile=".\\data\\restaurant.csv")
+> restData<-read.csv(".\\data\\restaurant.csv")
+> head(restData, n=3)
+> tail(restData, n=3)
+> summary(restData)
+                           name         zipCode             neighborhood
+ MCDONALD'S                  :   8   Min.   :-21226   Downtown    :128  
+ POPEYES FAMOUS FRIED CHICKEN:   7   1st Qu.: 21202   Fells Point : 91  
+ SUBWAY                      :   6   Median : 21218   Inner Harbor: 89  
+ KENTUCKY FRIED CHICKEN      :   5   Mean   : 21185   Canton      : 81  
+ BURGER KING                 :   4   3rd Qu.: 21226   Federal Hill: 42  
+ DUNKIN DONUTS               :   4   Max.   : 21287   Mount Vernon: 33  
+ (Other)                     :1293                    (Other)     :863  
+ councilDistrict       policeDistrict                          Location.1    
+ Min.   : 1.000   SOUTHEASTERN:385    1101 RUSSELL ST\nBaltimore, MD\n:   9  
+ 1st Qu.: 2.000   CENTRAL     :288    201 PRATT ST\nBaltimore, MD\n   :   8  
+ Median : 9.000   SOUTHERN    :213    2400 BOSTON ST\nBaltimore, MD\n :   8  
+ Mean   : 7.191   NORTHERN    :157    300 LIGHT ST\nBaltimore, MD\n   :   5  
+ 3rd Qu.:11.000   NORTHEASTERN: 72    300 CHARLES ST\nBaltimore, MD\n :   4  
+ Max.   :14.000   EASTERN     : 67    301 LIGHT ST\nBaltimore, MD\n   :   4  
+                  (Other)     :145    (Other)                         :1289  
+> 
+> str(restData)
+'data.frame':	1327 obs. of  6 variables:
+ $ name           : Factor w/ 1277 levels "#1 CHINESE KITCHEN",..: 9 3 998 1 2 4 5 6 7 8 ...
+ $ zipCode        : int  21206 21231 21224 21211 21223 21218 21205 21211 21205 21231 ...
+ $ neighborhood   : Factor w/ 173 levels "Abell","Arlington",..: 53 52 18 66 104 33 98 133 98 157 ...
+ $ councilDistrict: int  2 1 1 14 9 14 13 7 13 1 ...
+ $ policeDistrict : Factor w/ 9 levels "CENTRAL","EASTERN",..: 3 6 6 4 8 3 6 4 6 6 ...
+ $ Location.1     : Factor w/ 1210 levels "1 BIDDLE ST\nBaltimore, MD\n",..: 835 334 554 755 492 537 505 530 507 569 ..
+ 
+ > quantile(restData$councilDistrict, na.rm=TRUE)
+  0%  25%  50%  75% 100% 
+   1    2    9   11   14 
+> quantile(restData$councilDistrict, na.rm=TRUE, probs=c(0.5, 0.75, 0.95))
+50% 75% 95% 
+  9  11  13 
+> 
+> table(restData$zipCode, useNA="ifany") ## with NA values, if they exist
+
+-21226  21201  21202  21205  21206  21207  21208  21209  21210  21211  21212 
+     1    136    201     27     30      4      1      8     23     41     28 
+ 21213  21214  21215  21216  21217  21218  21220  21222  21223  21224  21225 
+    31     17     54     10     32     69      1      7     56    199     19 
+ 21226  21227  21229  21230  21231  21234  21237  21239  21251  21287 
+    18      4     13    156    127      7      1      3      2      1 
+> 
+> table(restData$councilDistrict, restData$zipCode)
+    
+     -21226 21201 21202 21205 21206 21207 21208 21209 21210 21211 21212 21213
+  1       0     0    37     0     0     0     0     0     0     0     0     2
+  2       0     0     0     3    27     0     0     0     0     0     0     0
+  3       0     0     0     0     0     0     0     0     0     0     0     2
+  4       0     0     0     0     0     0     0     0     0     0    27     0
+  5       0     0     0     0     0     3     0     6     0     0     0     0
+  6       0     0     0     0     0     0     0     1    19     0     0     0
+  7       0     0     0     0     0     0     0     1     0    27     0     0
+  8       0     0     0     0     0     1     0     0     0     0     0     0
+  9       0     1     0     0     0     0     0     0     0     0     0     0
+  10      1     0     1     0     0     0     0     0     0     0     0     0
+  11      0   115   139     0     0     0     1     0     0     0     1     0
+  12      0    20    24     4     0     0     0     0     0     0     0    13
+  13      0     0     0    20     3     0     0     0     0     0     0    13
+  14      0     0     0     0     0     0     0     0     4    14     0     1
+  
+> sum(is.na(restData$councilDistrict))		## sums number of NA values in particular column
+[1] 0
+> any(is.na(restData$councilDistrict))		## shows if there is at least one NA in a particular column
+[1] FALSE
+> all(restData$zipCode > 0)					## if all value satisfy the condition 
+[1] FALSE
+
+> colSums(is.na(restData))					## sums by columns (colRows)
+           name         zipCode    neighborhood councilDistrict  policeDistrict 
+              0               0               0               0               0 
+     Location.1 
+              0 
+			  
+> all(colSums(is.na(restData))==0)			## all colSums are equal to 0
+[1] TRUE
+
+> table(restData$zipCode %in% c("21212", "21213"))	## value in range
+
+FALSE  TRUE 
+ 1268    59 
+> 
+
+> restData[restData$zipCode %in% c("21212", "21213"), ]		## subseting data.frame where zipCode values are "21212", "21213"
+                                     name zipCode                neighborhood
+29                      BAY ATLANTIC CLUB   21212                    Downtown
+39                            BERMUDA BAR   21213               Broadway East
+92                              ATWATER'S   21212   Chinquapin Park-Belvedere
+111            BALTIMORE ESTONIAN SOCIETY   21213          South Clifton Park
+187                              CAFE ZEN   21212                    Rosebank
+220                   CERIELLO FINE FOODS   21212   Chinquapin Park-Belvedere
+266    CLIFTON PARK GOLF COURSE SNACK BAR   21213                 Darley Park
+276                CLUB HOUSE BAR & GRILL   21213 Orangeville Industrial Area
+289                 CLUBHOUSE BAR & GRILL   21213 Orangeville Industrial Area
+291                           COCKY LOU'S   21213               Broadway East
+362       DREAM TAVERN, CARRIBEAN  U.S.A.   21213               Broadway East
+373                         DUNKIN DONUTS   21212                    Homeland
+383        EASTSIDE  SPORTS  SOCIAL  CLUB   21213               Broadway East
+417                      FIELDS OLD TRAIL   21212                  Mid-Govans
+
+##  Cross tabs
+> data(UCBAdmissions)
+> DF <- as.data.frame(UCBAdmissions)
+> summary(DF)
+      Admit       Gender   Dept       Freq      
+ Admitted:12   Male  :12   A:4   Min.   :  8.0  
+ Rejected:12   Female:12   B:4   1st Qu.: 80.0  
+                           C:4   Median :170.0  
+                           D:4   Mean   :188.6  
+                           E:4   3rd Qu.:302.5  
+                           F:4   Max.   :512.0  
+> xt<-xtabs(Freq~Gender+Admit,data=DF)
+> xt
+        Admit
+Gender   Admitted Rejected
+  Male       1198     1493
+  Female      557     1278
+> xt1<-xtabs(Freq~Admit+Gender,data=DF)
+> xt1
+          Gender
+Admit      Male Female
+  Admitted 1198    557
+  Rejected 1493   1278
+
+  
+> head(warpbreaks)
+  breaks wool tension
+1     26    A       L
+2     30    A       L
+3     54    A       L
+4     25    A       L
+5     70    A       L
+6     52    A       L
+> summary(warpbreaks)
+     breaks      wool   tension
+ Min.   :10.00   A:27   L:18   
+ 1st Qu.:18.25   B:27   M:18   
+ Median :26.00          H:18   
+ Mean   :28.15                 
+ 3rd Qu.:34.00                 
+ Max.   :70.00                 
+> warpbreaks$replicate<-rep(1:9, len = 54)
+> xt3= xtabs(breaks~.,data=warpbreaks)
+> xt3
+, , replicate = 1
+
+    tension
+wool  L  M  H
+   A 26 18 36
+   B 27 42 20
+
+, , replicate = 2
+
+    tension
+wool  L  M  H
+   A 30 21 21
+   B 14 26 21
+
+, , replicate = 3
+
+    tension
+wool  L  M  H
+   A 54 29 24
+   B 29 19 24
+ 
+ > ftable(xt3)		## flat table
+             replicate  1  2  3  4  5  6  7  8  9
+wool tension                                     
+A    L                 26 30 54 25 70 52 51 26 67
+     M                 18 21 29 17 12 18 35 30 36
+     H                 36 21 24 18 10 43 28 15 26
+B    L                 27 14 29 19 29 31 41 20 44
+     M                 42 26 19 16 39 28 21 39 29
+     H                 20 21 24 17 13 15 15 16 28
+> 
+
+> fakeData = rnorm(1e5)
+> object.size(fakeData)						## size of the object
+800040 bytes
+> print(object.size(fakeData), units="Mb")
+0.8 Mb
+> 
