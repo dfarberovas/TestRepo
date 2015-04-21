@@ -184,7 +184,7 @@ HDF - hierarchical data format
 
 ## ---------------------------------- Reading API ----------------- ##
 ## Twitter API
-myapp = oath_app("twitter", 
+myapp = oauth_app("twitter", 
 					key = "yourConsummerKeyHere",
 					secrete="yourConsumerSecreteHere")
 sig = sign_oaauth1.0(myapp,

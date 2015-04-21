@@ -1,3 +1,6 @@
+## http://statmethods.net/management/functions.html
+## http://www.biostat.jhsph.edu/~ajaffe/lec_winterR/Lecture%202.pdf
+
 ## ------------------------ Subsetting and sorting ---------------------------- ##
 > set.seed(13435)
 > X<-data.frame("var1"=sample(1:5), "var2"=sample(6:10), "var3"=sample(11:15))
@@ -398,5 +401,155 @@ cos(x), sin(x)
 log(x), log2(x), log10(x)
 exp(x)
 
-## http://statmethods.net/management/functions.html
-## http://www.biostat.jhsph.edu/~ajaffe/lec_winterR/Lecture%202.pdf
+
+## ------------------------- Reshaping data ----------------------- ##
+
+	Each variable froms a column
+	Each observation forms a row
+	Each table/file stores data about one kind of observation
+
+> library(reshape2)
+> head(mtcars)
+                   mpg cyl disp  hp drat    wt  qsec vs am gear carb
+Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+
+> mtcars$carname<-rownames(mtcars)
+> head(mtcars)
+                   mpg cyl disp  hp drat    wt  qsec vs am gear carb
+Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+                            carname
+Mazda RX4                 Mazda RX4
+Mazda RX4 Wag         Mazda RX4 Wag
+Datsun 710               Datsun 710
+Hornet 4 Drive       Hornet 4 Drive
+Hornet Sportabout Hornet Sportabout
+Valiant                     Valiant
+
+> carMelt<-melt(mtcars, id=c("carname", "gear", "cyl"), measure.vars=c("mpg", "hp")) ## 
+> carMelt[carMelt$carname=="Mazda RX4",]
+     carname gear cyl variable value
+1  Mazda RX4    4   6      mpg    21
+33 Mazda RX4    4   6       hp   110
+> 
+
+> cylData <- dcast(carMelt, cyl ~ variable) ## summarize data set
+> cylData
+  cyl mpg hp
+1   4  11 11	
+2   6   7  7
+3   8  14 14
+ 
+## dcast   - cast as data.frame
+## acast   - cast as array (multidimensional)
+## arrange - faster reordering without order() commands
+## mutate  - adding new variables
+> cylData <- dcast(carMelt, cyl ~ variable, mean); cylData		
+  cyl      mpg        hp
+1   4 26.66364  82.63636
+2   6 19.74286 122.28571
+3   8 15.10000 209.21429
+> 
+
+
+> head(InsectSprays)
+  count spray
+1    10     A
+2     7     A
+3    20     A
+4    14     A
+5    14     A
+6    12     A
+
+> tapply(InsectSprays$count, InsectSprays$spray, sum)	## sum count values for each unique spray value (A, B, ....) select sum(count), spray from InsectSprays group by spray
+  A   B   C   D   E   F 
+174 184  25  59  42 200 
+
+
+## split, apply, combine
+> spIns = split(InsectSprays$count, InsectSprays$spray);spIns; ## split by spray
+$A
+ [1] 10  7 20 14 14 12 10 23 17 20 14 13
+
+$B
+ [1] 11 17 21 11 16 14 17 17 19 21  7 13
+
+$C
+ [1] 0 1 7 2 3 1 2 1 3 0 1 4
+
+$D
+ [1]  3  5 12  6  4  3  5  5  5  5  2  4
+
+$E
+ [1] 3 5 3 5 3 6 1 1 3 2 6 4
+
+$F
+ [1] 11  9 15 22 15 16 13 10 26 26 24 13
+
+> sprCount = lapply(spIns, sum); sprCount ## list apply
+
+$A
+[1] 174
+
+$B
+[1] 184
+
+$C
+[1] 25
+
+$D
+[1] 59
+
+$E
+[1] 42
+
+$F
+[1] 200
+
+> unlist(sprCount)			## from list to vector
+  A   B   C   D   E   F 
+174 184  25  59  42 200 
+
+> sapply(spIns, sum)		## apply + combine(unlist)
+  A   B   C   D   E   F 
+174 184  25  59  42 200 
+> 
+
+> library(plyr)
+> ddply(InsectSprays, .(spray), summarize, sum=sum(count))	## plyr lib group by sum as data.frame
+  spray sum
+1     A 174
+2     B 184
+3     C  25
+4     D  59
+5     E  42
+6     F 200
+
+> spraySums <- ddply(InsectSprays, .(spray), summarize, sum=ave(count, FUN=sum))
+> spraySums
+   spray sum
+1      A 174
+2      A 174
+3      A 174
+4      A 174
+5      A 174
+6      A 174
+7      A 174
+8      A 174
+9      A 174
+10     A 174
+11     A 174
+12     A 174
+13     B 184
+14     B 184
+15     B 184
+16     B 184
